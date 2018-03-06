@@ -10,8 +10,11 @@ def requestNewJobs():
     return sortedJobs
 
 def loadOldJobs():
-    with open(jobFileName, "r") as jobFile:
-        return jobFile.read()
+    try:
+        with open(jobFileName, "r") as jobFile:
+            return jobFile.read()
+    except:
+        pass
 
 sortedJobs = requestNewJobs()
 idAndTitles = list(map(lambda job: job['id_icims'] + ',' + job['title'], sortedJobs))
