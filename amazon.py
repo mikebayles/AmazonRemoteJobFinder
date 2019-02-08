@@ -3,7 +3,7 @@ import requests, csv, json, sys
 jobFileName = 'jobs.txt'
 
 def requestNewJobs():
-    request = requests.get('https://www.amazon.jobs/search.json?category[]=software-development&location[]=virtual-locations&category[]=software-development', headers= {'accept': 'application/json'})
+    request = requests.get('https://www.amazon.jobs/en/search.json?category%5B%5D=software-development&category%5B%5D=software-development&location%5B%5D=minneapolis-mn', headers= {'accept': 'application/json'})
     jsonDict = request.json()
     sortedJobs = sorted(jsonDict['jobs'], key=lambda k: k['id_icims'])
 
