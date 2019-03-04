@@ -36,9 +36,4 @@ jobs:
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'JobsOutput' 
-      targetPath: $(jobsVirtual)
-
-  - task: PublishPipelineArtifact@0
-    inputs:
-      artifactName: 'JobsOutput' 
-      targetPath: $(jobsMinneapolis)
+      targetPath: '*.txt'
