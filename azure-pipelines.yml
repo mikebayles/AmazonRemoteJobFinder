@@ -27,7 +27,7 @@ jobs:
   - script: python3 -m pip install --upgrade pip && pip install -r requirements.txt
     displayName: 'Install dependencies'
 
-  - script: python3 pet-finder.py $(slackHook)
+  - script: python3 amazon.py $(slackHook)
     displayName: 'Finding Jobs'
 
   - task: PublishPipelineArtifact@0
