@@ -1,30 +1,56 @@
-import requests, csv, json, sys
+import requests
+import csv
+import json
+import sys
+
 
 def requestNewJobs(query):
-    request = requests.get('https://www.amazon.jobs/en/search.json?' + str(query), headers= {'accept': 'application/json'})
+    request = requests.get('https://www.amazon.jobs/en/search.json?' +
+                           str(query), headers={'accept': 'application/json'})
     jsonDict = request.json()
     sortedJobs = sorted(jsonDict['jobs'], key=lambda k: k['id_icims'])
 
     return sortedJobs
+
 
 def loadOldJobs():
     try:
         with open(jobFileName, "r") as jobFile:
             return jobFile.read()
     except:
-        pass
-    
-jobFileName = sys.argv[3]    
+        return ""
 
-sortedJobs = requestNewJobs(sys.argv[2])
-idAndTitles = list(map(lambda job: job['id_icims'] + ',' + job['title'], sortedJobs))
-newJobs = "\n".join(idAndTitles)
 
-oldJobs = loadOldJobs()
+def newJobAttachment(title, url):
+    data = {
+        'title': title,
+        'title_link': url,
+    }
+    return data
 
-if oldJobs != newJobs:
-    data = {'text' : '@here new jobs!'}
-    requests.post(sys.argv[1], json=data)
 
-with open(jobFileName, "w") as jobFile:
-    jobFile.write(newJobs)
+def findJobs(slackHook, query, jobsFileName):
+    sortedJobs = requestNewJobs(query)
+    ids = list(map(lambda job: job['id_icims'], sortedJobs))
+
+    oldJobs = loadOldJobs().splitlines()
+
+    newJobIds = [job for job in ids if job not in oldJobs]
+
+    attachments = []
+    for newJobId in newJobIds:
+        newJob = [job for job in sortedJobs if job['id_icims'] == newJobId][0]
+        attachments.append(newJobAttachment(
+            newJob['title'], newJob['url_next_step']))
+
+    if attachments:
+        data = {'text': '@here new jobs!'}
+        data['attachments'] = attachments
+        requests.post(slackHook, json=data)
+
+    with open(jobsFileName, "w") as jobFile:
+        jobFile.write("\n".join(ids))
+
+
+if __name__ == "__main__":
+    findJobs(sys.argv[1], sys.argv[2], sys.argv[3])
