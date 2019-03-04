@@ -1,7 +1,5 @@
 import requests, csv, json, sys
 
-jobFileName = 'jobs.txt'
-
 def requestNewJobs(query):
     request = requests.get('https://www.amazon.jobs/en/search.json?' + str(query), headers= {'accept': 'application/json'})
     jsonDict = request.json()
@@ -15,8 +13,10 @@ def loadOldJobs():
             return jobFile.read()
     except:
         pass
+    
+jobFileName = sys.argv[3]    
 
-sortedJobs = requestNewJobs(argv[2])
+sortedJobs = requestNewJobs(sys.argv[2])
 idAndTitles = list(map(lambda job: job['id_icims'] + ',' + job['title'], sortedJobs))
 newJobs = "\n".join(idAndTitles)
 
