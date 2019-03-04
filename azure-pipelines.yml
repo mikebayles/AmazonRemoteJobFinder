@@ -27,10 +27,10 @@ jobs:
   - script: python3 -m pip install --upgrade pip && pip install -r requirements.txt
     displayName: 'Install dependencies'
 
-  - script: python3 amazon.py $(slackHookVirtual) $(queryVirtual) $(jobsVirtual)
+  - script: python3 amazon.py $(slackHookVirtual) '$(queryVirtual)' $(jobsVirtual)
     displayName: 'Finding Virtual Jobs'
 
-  - script: python3 amazon.py $(slackHookMinneapolis) $(queryMinneapolis) $(jobsMinneapolis)
+  - script: python3 amazon.py $(slackHookMinneapolis) '$(queryMinneapolis)' $(jobsMinneapolis)
     displayName: 'Finding Minneapolis Jobs'
 
   - task: PublishPipelineArtifact@0
