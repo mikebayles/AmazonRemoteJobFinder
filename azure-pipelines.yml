@@ -1,0 +1,36 @@
+trigger:
+- master
+
+jobs:
+
+- job: 'Run'
+  pool:
+    vmImage: 'Ubuntu-16.04'
+
+  steps:
+  - powershell: |
+      Set-Variable -Name lastBuild -Value ($(Build.buildId) - 1)
+      Write-Host "##vso[task.setvariable variable=lastBuild]$lastBuild"    
+    displayName: Get last build number
+
+  - task: DownloadPipelineArtifact@1
+    continueOnError: true
+    inputs:
+      buildType: 'specific'
+      definition: $(Build.DefinitionName)
+      project: $(System.TeamProjectId)
+      buildVersionToDownload: 'specific'
+      buildId: $(lastBuild)
+      artifactName: JobsOutput
+      downloadPath: $(Build.SourcesDirectory)
+
+  - script: python3 -m pip install --upgrade pip && pip install -r requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: python3 pet-finder.py $(slackHook)
+    displayName: 'Finding Jobs'
+
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'JobsOutput' 
+      targetPath: jobs.txt
