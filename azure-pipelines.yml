@@ -25,7 +25,7 @@ jobs:
       project: $(System.TeamProjectId)
       buildVersionToDownload : 'specific'
       buildId: $(lastBuild)
-      artifactName: JobsOutput
+      artifactName: $(jobsFolder)
       downloadPath: $(Build.SourcesDirectory)
 
   - script: python3 -m pip install --upgrade pip && pip install -r requirements.txt
@@ -39,5 +39,5 @@ jobs:
 
   - task: PublishPipelineArtifact@0
     inputs:
-      artifactName: 'JobsOutput' 
+      artifactName: '$(jobsFolder)' 
       targetPath: '$(jobsFolder)'
