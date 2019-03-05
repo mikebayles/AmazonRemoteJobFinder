@@ -24,17 +24,19 @@ jobs:
       buildVersionToDownload : 'specific'
       buildId: $(lastBuild)
       artifactName: $(jobsFolder)
-      downloadPath: $(Build.SourcesDirectory)
+      downloadPath: $(Build.SourcesDirectory)/$(jobsFolder)
 
+  - powershell: Get-ChildItem -Recurse
+  - powershell: New-Item -Force -ItemType directory -Path $env:JOBSFOLDER
   - powershell: Get-ChildItem -Recurse
 
   - script: python3 -m pip install --upgrade pip && pip install -r requirements.txt
     displayName: 'Install dependencies'
 
-  - script: python3 amazon.py $(slackHookVirtual) '$(queryVirtual)' '$(jobsVirtual)'
+  - script: python3 amazon.py $(slackHookVirtual) '$(queryVirtual)' '$(jobsFolder)/$(jobsVirtual)'
     displayName: 'Finding Virtual Jobs'
 
-  - script: python3 amazon.py $(slackHookMinneapolis) '$(queryMinneapolis)' '$(jobsMinneapolis)'
+  - script: python3 amazon.py $(slackHookMinneapolis) '$(queryMinneapolis)' '$(jobsFolder)/$(jobsMinneapolis)'
     displayName: 'Finding Minneapolis Jobs'
 
   - task: PublishPipelineArtifact@0
