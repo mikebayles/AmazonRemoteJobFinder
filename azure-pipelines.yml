@@ -27,6 +27,7 @@ jobs:
       downloadPath: $(Build.SourcesDirectory)
 
   - powershell: Get-ChildItem -Recurse
+  - powershell: New-Item -Force -ItemType directory -Path $env:JOBSFOLDER
 
   - script: python3 -m pip install --upgrade pip && pip install -r requirements.txt
     displayName: 'Install dependencies'
