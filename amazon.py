@@ -15,7 +15,7 @@ def requestNewJobs(query):
 
 def loadOldJobs(jobsFileName):
     try:
-        with open(jobFileName, "r") as jobFile:
+        with open(jobsFileName, "r") as jobFile:
             return jobFile.read()
     except Exception as e:
         print("No good", e)
