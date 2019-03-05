@@ -39,6 +39,8 @@ def findJobs(slackHook, query, jobsFileName):
     print("Old jobs were", oldJobs)
 
     newJobIds = [job for job in ids if job not in oldJobs]
+    
+    print("New jobs are", newJobIds)
 
     attachments = []
     for newJobId in newJobIds:
