@@ -26,7 +26,7 @@ jobs:
       artifactName: $(jobsFolder)
       downloadPath: $(Build.SourcesDirectory)
 
-  - powershell: Get-ChildItem -Recursive
+  - powershell: Get-ChildItem -Recurse
 
   - script: python3 -m pip install --upgrade pip && pip install -r requirements.txt
     displayName: 'Install dependencies'
