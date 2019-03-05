@@ -2,7 +2,7 @@ import requests
 import csv
 import json
 import sys
-
+import os
 
 def requestNewJobs(query):
     request = requests.get('https://www.amazon.jobs/en/search.json?' +
@@ -48,9 +48,9 @@ def findJobs(slackHook, query, jobsFileName):
         data['attachments'] = attachments
         requests.post(slackHook, json=data)
 
-    with open(jobsFileName, "w+") as jobFile:
+    mode = 'a' if os.path.exists(writepath) else 'w'
+    with open(writepath, mode) as jobFile:
         jobFile.write("\n".join(ids))
-
 
 if __name__ == "__main__":
     findJobs(sys.argv[1], sys.argv[2], sys.argv[3])
