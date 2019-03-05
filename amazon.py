@@ -13,7 +13,7 @@ def requestNewJobs(query):
     return sortedJobs
 
 
-def loadOldJobs():
+def loadOldJobs(jobsFileName):
     try:
         with open(jobFileName, "r") as jobFile:
             return jobFile.read()
@@ -33,7 +33,7 @@ def findJobs(slackHook, query, jobsFileName):
     sortedJobs = requestNewJobs(query)
     ids = list(map(lambda job: job['id_icims'], sortedJobs))
 
-    oldJobs = loadOldJobs().splitlines()
+    oldJobs = loadOldJobs(jobsFileName).splitlines()
 
     newJobIds = [job for job in ids if job not in oldJobs]
 
