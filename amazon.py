@@ -34,6 +34,8 @@ def findJobs(slackHook, query, jobsFileName):
     ids = list(map(lambda job: job['id_icims'], sortedJobs))
 
     oldJobs = loadOldJobs(jobsFileName).splitlines()
+    
+    print("Old jobs were", oldJobs)
 
     newJobIds = [job for job in ids if job not in oldJobs]
 
