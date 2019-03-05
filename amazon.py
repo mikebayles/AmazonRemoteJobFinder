@@ -17,7 +17,8 @@ def loadOldJobs(jobsFileName):
     try:
         with open(jobFileName, "r") as jobFile:
             return jobFile.read()
-    except:
+    except Exception, e:
+        print("No good", e)
         return ""
 
 
