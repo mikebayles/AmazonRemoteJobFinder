@@ -44,7 +44,7 @@ def findJobs(slackHook, query, jobsFileName):
             newJob['title'], newJob['url_next_step']))
 
     if attachments:
-        data = {'text': '@here new jobs!'}
+        data = {'text' : '<!here> new jobs!'}
         data['attachments'] = attachments
         requests.post(slackHook, json=data)
 
