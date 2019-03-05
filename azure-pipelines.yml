@@ -15,7 +15,7 @@ jobs:
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
-  - powershell: New-Item -ItemType "directory" -Path "$env:JOBSFOLDER"
+  - powershell: Get-ChildItem -Recurse
 
   - task: DownloadPipelineArtifact@1
     continueOnError: true
