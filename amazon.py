@@ -49,7 +49,7 @@ def findJobs(slackHook, query, jobsFileName):
         requests.post(slackHook, json=data)
 
     mode = 'a' if os.path.exists(jobsFileName) else 'w'
-    with open(writepath, mode) as jobFile:
+    with open(jobsFileName, mode) as jobFile:
         jobFile.write("\n".join(ids))
 
 if __name__ == "__main__":
