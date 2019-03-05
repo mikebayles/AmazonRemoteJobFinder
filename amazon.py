@@ -48,7 +48,7 @@ def findJobs(slackHook, query, jobsFileName):
         data['attachments'] = attachments
         requests.post(slackHook, json=data)
 
-    with open(jobsFileName, "w") as jobFile:
+    with open(jobsFileName, "w+") as jobFile:
         jobFile.write("\n".join(ids))
 
 
