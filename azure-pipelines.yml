@@ -23,7 +23,7 @@ jobs:
       project: $(System.TeamProjectId)
       buildVersionToDownload : 'specific'
       buildId: $(lastBuild)
-      artifactName: JobsOutput
+      artifactName: $(jobsFolder)
       downloadPath: $(Build.SourcesDirectory)
 
   - powershell: Get-ChildItem -Recurse
@@ -31,13 +31,13 @@ jobs:
   - script: python3 -m pip install --upgrade pip && pip install -r requirements.txt
     displayName: 'Install dependencies'
 
-  - script: python3 amazon.py $(slackHookVirtual) '$(queryVirtual)' 'virtual'
+  - script: python3 amazon.py $(slackHookVirtual) '$(queryVirtual)' '$(jobsFolder)/$(jobsVirtual)'
     displayName: 'Finding Virtual Jobs'
 
-  - script: python3 amazon.py $(slackHookMinneapolis) '$(queryMinneapolis)' 'minneapolis'
+  - script: python3 amazon.py $(slackHookMinneapolis) '$(queryMinneapolis)' '$(jobsFolder)/$(jobsMinneapolis)'
     displayName: 'Finding Minneapolis Jobs'
 
   - task: PublishPipelineArtifact@0
     inputs:
-      artifactName: JobsOutput
-      targetPath: 'jobs.txt'
+      artifactName: '$(jobsFolder)' 
+      targetPath: '$(jobsFolder)'
