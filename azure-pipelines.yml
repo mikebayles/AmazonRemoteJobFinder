@@ -15,8 +15,6 @@ jobs:
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
-  - powershell: Get-ChildItem -Recurse
-
   - task: DownloadPipelineArtifact@1
     continueOnError: true
     inputs:
@@ -27,6 +25,8 @@ jobs:
       buildId: $(lastBuild)
       artifactName: $(jobsFolder)
       downloadPath: $(Build.SourcesDirectory)
+
+  - powershell: Get-ChildItem -Recurse
 
   - script: python3 -m pip install --upgrade pip && pip install -r requirements.txt
     displayName: 'Install dependencies'
