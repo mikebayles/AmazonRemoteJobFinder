@@ -1,0 +1,5 @@
+steps:
+  - label: ":python:"
+    commands:
+      - pip3 install -r requirements.txt
+      - python3 amazon.py location[]=virtual-locations&location[]=minneapolis-mn&category[]=software-development

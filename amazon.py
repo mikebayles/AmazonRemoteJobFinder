@@ -1,28 +1,43 @@
-import requests
-import csv
-import json
-import sys
+from botocore.vendored import requests
+from boto3.dynamodb.conditions import Key, Attr
+from botocore.exceptions import ClientError
 import os
+import sys
+import boto3
+import json
 
-def requestNewJobs(query):
-    request = requests.get('https://www.amazon.jobs/en/search.json?' +
-                           str(query), headers={'accept': 'application/json'})
-    jsonDict = request.json()
-    sortedJobs = sorted(jsonDict['jobs'], key=lambda k: k['id_icims'])
-
-    return sortedJobs
+dynamodb = boto3.resource('dynamodb')
 
 
-def loadOldJobs(jobsFileName):
-    try:
-        with open(jobsFileName, "r") as jobFile:
-            return jobFile.read()
-    except Exception as e:
-        print("No good", e)
-        return ""
+def search_for_jobs(query):
+    request = requests.get('https://www.amazon.jobs/en/search.json?' + str(query),
+                           headers={'accept': 'application/json'})
+
+    return request.json()
 
 
-def newJobAttachment(title, url):
+def get_new_jobs(jobs):
+    new_jobs = []
+    table = dynamodb.Table('Jobs')
+
+    for job in jobs:
+        try:
+            resp = table.put_item(
+                Item={
+                    'id': job['id_icims'],
+                },
+                ConditionExpression=Attr('id').not_exists())
+
+            print(resp)
+            new_jobs.append(job)
+
+        except ClientError as e:
+            print(e)
+
+    return new_jobs
+
+
+def new_job_attachment(title, url):
     data = {
         'title': title,
         'title_link': url,
@@ -30,31 +45,23 @@ def newJobAttachment(title, url):
     return data
 
 
-def findJobs(slackHook, query, jobsFileName):
-    sortedJobs = requestNewJobs(query)
-    ids = list(map(lambda job: job['id_icims'], sortedJobs))
+def main(query):
+    all_jobs = search_for_jobs(query)
+    new_jobs = get_new_jobs(all_jobs)
 
-    oldJobs = loadOldJobs(jobsFileName).splitlines()
-    
-    print("Old jobs were", oldJobs)
+    slack_hook = os.environ['slack_hook']
 
-    newJobIds = [job for job in ids if job not in oldJobs]
-    
-    print("New jobs are", newJobIds)
-
+    data = {'text': '<!here> new jobs!'}
     attachments = []
-    for newJobId in newJobIds:
-        newJob = [job for job in sortedJobs if job['id_icims'] == newJobId][0]
-        attachments.append(newJobAttachment(
-            newJob['title'], newJob['url_next_step']))
+    data['attachments'] = attachments
 
-    if attachments:
-        data = {'text' : '<!here> new jobs!'}
-        data['attachments'] = attachments
-        requests.post(slackHook, json=data)
-    
-    with open(jobsFileName, 'w') as jobFile:
-        jobFile.write("\n".join(ids))
+    for job in new_jobs:
+        attachments.append(new_job_attachment(
+            job['title'], job['url_next_step']))
+
+    if len(attachments) > 0:
+        requests.post(slack_hook, json=data)
+
 
 if __name__ == "__main__":
-    findJobs(sys.argv[1], sys.argv[2], sys.argv[3])
+    main(sys.argv[1])
