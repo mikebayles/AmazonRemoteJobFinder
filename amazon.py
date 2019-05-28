@@ -13,7 +13,7 @@ def search_for_jobs(query):
     request = requests.get('https://www.amazon.jobs/en/search.json?' + str(query),
                            headers={'accept': 'application/json'})
 
-    return request.json()
+    return request.json()['jobs']
 
 
 def get_new_jobs(jobs):
