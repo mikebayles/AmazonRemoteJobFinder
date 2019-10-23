@@ -1,10 +1,9 @@
-from botocore.vendored import requests
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 import os
 import sys
 import boto3
-import json
+import requests
 
 dynamodb = boto3.resource('dynamodb')
 
