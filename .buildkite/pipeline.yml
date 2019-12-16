@@ -1,5 +1,6 @@
 steps:
   - label: ":python:"
+    timeout_in_minutes: 10
     commands:
-      - pip3 install -r requirements.txt
+      - pip3 install -r requirements.txt  --no-cache-dir
       - python3 amazon.py "location[]=virtual-locations&location[]=minneapolis-mn&category[]=software-development"
